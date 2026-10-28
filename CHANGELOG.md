@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 — 2026-10-28
+- Security: Electron 44.7.1 → 44.9.3, which distrusts the compromised eMudhra intermediate certificates (Dependabot alert 1, high). The game makes no network requests, so the practical risk was low, but the apps no longer ship the affected runtime.
+- Repository: published at github.com/git-cgallagher/keystone-quarry (public, MIT) with CI (`npm run check`, Windows and macOS packaging), Dependabot for GitHub Actions, and a security policy.
+
 ## 1.2.0 — 2026-10-28
 - Music: each mine (and the mine map) has its own theme, with its own key, chords, instrument (piano, pluck or bell) and echo, matched to how the mine looks. It is faster than before: 130–190 note slots a minute instead of 80. The Rumble Golem fight switches to a faster boss theme (230 a minute).
 
