@@ -89,22 +89,33 @@ p { margin: 0; }
 .inv i { width: 18px; height: 18px; display: inline-block; background-size: cover; image-rendering: pixelated; }
 .section-h { font-family: var(--display); font-weight: 400; font-size: 20px; }
 .toast { background: var(--good); color: #0f2614; font-weight: 700; padding: 10px 14px; box-shadow: inset -4px -4px 0 rgba(0,0,0,.2); }
-.levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-.level {
-  display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center;
-  text-align: left; color: var(--ink); font: inherit;
-  background: var(--panel); border: 3px solid var(--edge); padding: 12px; cursor: pointer;
-}
-.level:hover:not([disabled]) { border-color: var(--lamp); }
-.level[disabled] { cursor: not-allowed; }
-.level[disabled] .lv-icon { filter: grayscale(1) brightness(.5); }
-.level[disabled] .lv-name { color: var(--muted); }
+/* Map: a slice of the hill under the camp. The canvas draws it; real buttons sit over each mine for clicks and focus. */
+.map-frame { position: relative; border: 4px solid #000; box-shadow: 0 0 0 4px var(--edge); background: #231d2e; }
+.map-frame canvas { display: block; width: 100%; image-rendering: pixelated; }
+.map-nodes { position: absolute; inset: 0; }
+.map-node { position: absolute; transform: translate(-50%, -50%); min-width: 40px; min-height: 40px; background: transparent; border: 0; padding: 0; cursor: pointer; }
+.map-node:focus-visible { outline-offset: 0; }
+.map-help { color: var(--muted); font-size: 15px; }
+.map-info { display: grid; grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1.1fr) auto; gap: 14px 18px; align-items: center; background: var(--panel); border-left: 4px solid var(--lamp); padding: 14px; }
 .lv-icon { width: 56px; height: 56px; background-size: cover; image-rendering: pixelated; box-shadow: inset 0 0 0 3px rgba(0,0,0,.35); }
 .lv-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.lv-name { font-weight: 700; font-size: 18px; line-height: 1.2; }
+.lv-name { font-weight: 700; font-size: 19px; line-height: 1.2; }
 .lv-keys { color: var(--muted); font-size: 14px; }
 .lv-stars { font-size: 18px; letter-spacing: 2px; color: var(--edge); white-space: nowrap; }
 .lv-stars b { color: var(--lamp); font-weight: 400; }
+.mi-best { font-size: 15px; }
+.mi-best b { color: var(--lamp); }
+/* High score tables (map panel and results) */
+.hs-h { font-family: var(--display); font-weight: 400; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.hs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; font-size: 15px; }
+.hs li { display: grid; grid-template-columns: 1.6em 3.2em 1fr auto auto; gap: 10px; padding: 2px 8px; background: var(--panel-2); }
+.hs li span:first-child { color: var(--muted); }
+.hs li b { font-family: var(--display); font-weight: 400; color: var(--lamp); }
+.hs li .pts { text-align: right; font-weight: 700; }
+.hs li .sub { color: var(--muted); text-align: right; }
+.hs li.new { background: var(--lamp); color: var(--lamp-ink); }
+.hs li.new b, .hs li.new span { color: var(--lamp-ink); }
+.hs-none { color: var(--muted); font-size: 15px; }
 .tips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .tip { background: var(--panel); padding: 14px; display: flex; flex-direction: column; gap: 6px; }
 .tip h3 { font-family: var(--display); font-weight: 400; font-size: 14px; color: var(--lamp); }
@@ -176,18 +187,26 @@ p { margin: 0; }
 .result-card h2 { font-family: var(--display); font-weight: 400; font-size: 28px; }
 .stars { font-size: 52px; line-height: 1; letter-spacing: 8px; color: var(--edge); }
 .stars b { color: var(--lamp); font-weight: 400; text-shadow: 3px 3px 0 #000; }
-.res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; width: 100%; }
+.res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; width: 100%; }
 .res-grid div { background: var(--panel-2); padding: 10px; display: flex; flex-direction: column; font-variant-numeric: tabular-nums; }
 .res-grid span:first-child { font-family: var(--display); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .res-grid span:last-child { font-size: 26px; font-weight: 700; }
 .res-msg { font-size: 18px; max-width: 46ch; }
 .res-msg.unlock { color: var(--good); }
+.res-scores { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.badges:empty { display: none; }
+.badge { font-family: var(--display); font-size: 13px; background: var(--good); color: #0f2614; padding: 6px 10px; box-shadow: inset -3px -3px 0 rgba(0,0,0,.2); }
+.initials { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; }
+.initials input { width: 4.2em; font: 400 22px var(--display); text-align: center; text-transform: uppercase; letter-spacing: .1em; background: var(--bg); color: var(--lamp); border: 3px solid var(--lamp); padding: 4px; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .ghost-input { position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; font-size: 16px; border: 0; padding: 0; pointer-events: none; }
 
 @media (max-width: 760px) {
   .hero { grid-template-columns: minmax(0, 1fr); }
   .tips { grid-template-columns: minmax(0, 1fr); }
+  .map-info { grid-template-columns: 56px minmax(0, 1fr); }
+  .map-info .mi-scores, .map-info .btn { grid-column: 1 / -1; }
   .camp-frame canvas { height: 210px; }
   .prompt { font-size: 21px; }
   .finger { font-size: 16px; }
@@ -227,9 +246,14 @@ p { margin: 0; }
       </div>
       <div class="camp-frame"><canvas id="camp" aria-label="Your camp, built from the blocks you have mined"></canvas></div>
     </div>
-    <h2 class="section-h">Pick a mine</h2>
+    <h2 class="section-h">The quarry map</h2>
     <p id="toast" class="toast" role="status" hidden></p>
-    <div id="levels" class="levels"></div>
+    <div class="map-frame">
+      <canvas id="map" aria-hidden="true"></canvas>
+      <div id="mapNodes" class="map-nodes" role="group" aria-label="Mines on the map"></div>
+    </div>
+    <p class="map-help">Click a mine or use the arrow keys to walk Pip there. Press Enter to dig in.</p>
+    <div id="mapInfo" class="map-info" aria-live="polite"></div>
     <div class="tips">
       <div class="tip"><h3>Home row</h3><p>Rest your fingers on A S D F and J K L ;. Your pointer fingers find the little bumps on F and J.</p></div>
       <div class="tip"><h3>Eyes up</h3><p>Look at the screen, not your hands. The glowing key shows you where to go.</p></div>
@@ -243,7 +267,7 @@ p { margin: 0; }
       <div class="hud-title"><span class="eyebrow" id="hudMine">Mine 1</span><strong id="hudName">Home Row Hollow</strong></div>
       <div class="stats">
         <div class="stat"><span class="lbl">Correct</span><span id="stAcc">100%</span></div>
-        <div class="stat" id="wpmWrap"><span class="lbl">Words/min</span><span id="stWpm">0</span></div>
+        <div class="stat"><span class="lbl">Words/min</span><span id="stWpm">0</span></div>
         <div class="stat"><span class="lbl">Blocks</span><span id="stBlocks">0</span></div>
       </div>
       <button id="btnHands" class="btn ghost small" type="button" aria-pressed="true">Hands: on</button>
@@ -272,6 +296,11 @@ p { margin: 0; }
       <div class="stars" id="resStars"></div>
       <div class="res-grid" id="resGrid"></div>
       <p class="res-msg" id="resMsg"></p>
+      <div class="res-scores">
+        <p class="badges" id="resBadges"></p>
+        <label class="initials" id="initialsRow">Type your initials <input id="resName" type="text" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+        <div id="resTable"></div>
+      </div>
       <div class="actions">
         <button id="btnNext" class="btn" type="button">Next mine ▶</button>
         <button id="btnAgain" class="btn ghost" type="button">Dig again</button>
@@ -291,15 +320,23 @@ const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- save data (per-browser only) ---------- */
 const SAVE_KEY = 'keystone-quarry-v1';
 const PASS = 0.85;
-const freshSave = () => ({ unlocked: 1, stars: [0,0,0,0,0,0,0], best: [0,0,0,0,0,0,0], totals: { blocks: 0, coal: 0, iron: 0, gold: 0, gem: 0 }, muted: false, music: false, hands: true });
+// best = fastest words/min per mine; seen = tunnels already dug on the map; scores = top 5 runs per mine; at = Pip's map spot.
+const freshSave = () => ({ unlocked: 1, stars: [0,0,0,0,0,0,0], best: [0,0,0,0,0,0,0], seen: [1,0,0,0,0,0,0], scores: [[],[],[],[],[],[],[]],
+  name: '', at: 0, totals: { blocks: 0, coal: 0, iron: 0, gold: 0, gem: 0 }, muted: false, music: false, hands: true });
 let save = freshSave();
 function mergeSave(s) {
   const f = freshSave();
   if (!s || typeof s !== 'object') return f;
   // Older saves have fewer mines; pad per-mine arrays so new mines start at zero.
   const perMine = k => f[k].map((v, i) => Number(s[k] && s[k][i]) || 0);
-  return Object.assign(f, s, { totals: Object.assign(f.totals, s.totals || {}), stars: perMine('stars'), best: perMine('best') });
+  const seen = perMine('seen'); seen[0] = 1;
+  const scores = f.scores.map((_, i) => (Array.isArray(s.scores && s.scores[i]) ? s.scores[i] : [])
+    .filter(e => e && Number.isFinite(e.s)).slice(0, 5)
+    .map(e => ({ s: Math.round(e.s), w: Number(e.w) || 0, a: Number(e.a) || 0, n: cleanName(e.n) || 'YOU' })));
+  const at = Number.isInteger(s.at) && s.at >= 0 && s.at < f.stars.length ? s.at : 0;
+  return Object.assign(f, s, { totals: Object.assign(f.totals, s.totals || {}), stars: perMine('stars'), best: perMine('best'), seen, scores, at, name: cleanName(s.name) });
 }
+function cleanName(n) { return String(n || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3); }
 function loadSave() { try { const raw = localStorage.getItem(SAVE_KEY); if (raw) save = mergeSave(JSON.parse(raw)); } catch (e) {} }
 function writeSave() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
 
@@ -363,14 +400,14 @@ const LEVELS = [
   { name: 'Gold Depths', icon: 'gold', keys: 'z x c v b n m , .', tun: 'deep', below: 'deep', deep: 'deep', ore: 'gold',
     tip: 'Reach down to the bottom row. Your hands stay on home and only one finger moves.',
     segs: [{ k: 'vbnmfj', bias: 'vbnm', n: 3 }, { k: 'zxc,.dkl', bias: 'zxc,.', n: 2 }, { w: ['cave', 'mine', 'box', 'torch', 'cabin', 'jump', 'climb', 'zoom', 'map', 'lamp', 'van', 'crab'], n: 6 }] },
-  { name: 'Word Mine', icon: 'stone', keys: 'every letter', tun: 'mix', below: 'stone', deep: 'deep', ore: 'any', wpm: true,
+  { name: 'Word Mine', icon: 'stone', keys: 'every letter', tun: 'mix', below: 'stone', deep: 'deep', ore: 'any',
     tip: 'Real words now. Read each word, then type it one key at a time.',
     segs: [{ w: ['dig', 'gem', 'iron', 'pick', 'rock', 'sand', 'cart', 'path', 'lake', 'torch', 'ladder', 'bridge', 'miner', 'shovel', 'lantern', 'tunnel', 'pebble', 'quarry', 'fox', 'owl', 'frog', 'bucket', 'sky', 'mountain', 'river', 'jewel'], n: 10 }] },
-  { name: 'Crystal Caves', icon: 'gem', keys: 'Shift, capitals and periods', tun: 'amethyst', below: 'amethyst', deep: 'deep', ore: 'gem', wpm: true,
+  { name: 'Crystal Caves', icon: 'gem', keys: 'Shift, capitals and periods', tun: 'amethyst', below: 'amethyst', deep: 'deep', ore: 'gem',
     tip: 'For a capital letter, hold Shift with the pinky on the other hand.',
     segs: [{ s: ['I dig a deep tunnel.', 'Pip found a red gem.', 'The cave is dark.', 'We can build a big tower.', 'My lamp is bright.', 'A fox naps by the tree.', 'Look at the shiny gold.', 'Dig slow and stay safe.', 'Bats sleep in the cave.'], n: 3 }] },
   // Boss mine: opens after Mine 4 (every letter learned), not after Mine 6, so younger players reach it sooner.
-  { name: 'Gloom Hollow', icon: 'deep', keys: 'Boss battle! Every letter', mode: 'mobs', open: 5, tun: 'deep', below: 'deep', deep: 'deep', ore: 'gem', wpm: true,
+  { name: 'Gloom Hollow', icon: 'deep', keys: 'Boss battle! Every letter', mode: 'mobs', open: 5, tun: 'deep', below: 'deep', deep: 'deep', ore: 'gem',
     tip: 'Gloomlings are coming! Type the word on the closest one to send it home.',
     words: ['boo', 'glow', 'dark', 'shoo', 'zap', 'bat', 'mud', 'fog', 'hush', 'quiet', 'jump', 'web', 'yawn', 'fix', 'sky', 'vine', 'drip', 'echo'], waves: 8,
     boss: ['rumble', 'go', 'back', 'to', 'your', 'cave'] },
@@ -739,6 +776,7 @@ function tunnelTex(L, i) {
 function startLevel(i) {
   clearTimers();
   const L = LEVELS[i], text = L.mode === 'mobs' ? '' : buildText(L);
+  save.at = i;
   const tiles = [...text].map((ch, k) => {
     const space = ch === ' ';
     let ore = null;
@@ -751,7 +789,6 @@ function startLevel(i) {
     phase: 'wave', sent: 0, cleared: 0, total: L.waves + L.boss.length, ouch: 0, failed: false });
   $('#hudMine').textContent = 'Mine ' + (i + 1);
   $('#hudName').textContent = L.name;
-  $('#wpmWrap').hidden = !L.wpm;
   buildPrompt();
   show('play');
   setMusicTheme(LEVEL_MUSIC[i]);
@@ -1162,31 +1199,257 @@ function drawCamp(time) {
   drawPip(c, (ox - 2) * S, (rows - 3) * S, S, 0, bob, false);
 }
 
+/* ---------- map ---------- */
+// The map is a slice of the hill under Pip's camp. Each mine is a stop along a tunnel. When a mine opens, the tunnel
+// to it is dug out once while you watch, then Pip walks there. Pip can walk back along any dug tunnel to replay a mine.
+// The grid is 24 x 12 cells: rows 0-1 are sky and row 2 is grass. Each mine's sign sits in the rock above its stop.
+const MAP_W = 24, MAP_H = 12;
+const NODES = [[3, 4], [8, 6], [13, 4], [19, 6], [14, 9], [8, 10], [22, 10]];   // one stop per mine, in mine order
+// Tunnels as corner points, from the mine that opens first (a) to the one it leads to (b). Gloom Hollow branches off
+// Gold Depths, because it opens with Word Mine.
+const LINKS = [[0, 1, [3, 4], [6, 4], [6, 6], [8, 6]], [1, 2, [8, 6], [11, 6], [11, 4], [13, 4]], [2, 3, [13, 4], [16, 4], [16, 6], [19, 6]],
+  [3, 4, [19, 6], [19, 9], [14, 9]], [4, 5, [14, 9], [11, 9], [11, 10], [8, 10]], [3, 6, [19, 6], [21, 6], [21, 10], [22, 10]]]
+  .map(([a, b, ...pts]) => ({ a, b, cells: lineCells(pts) }));
+const SHAFT = [[2, 2], [2, 3], [2, 4]];   // ladder down from the camp
+function lineCells(pts) {
+  const out = [pts[0].slice()];
+  for (let k = 1; k < pts.length; k++) {
+    let [x, y] = pts[k - 1];
+    while (x !== pts[k][0] || y !== pts[k][1]) { if (x !== pts[k][0]) x += Math.sign(pts[k][0] - x); else y += Math.sign(pts[k][1] - y); out.push([x, y]); }
+  }
+  return out;
+}
+const near = (x, y, j, r) => Math.hypot(x - NODES[j][0], y - NODES[j][1]) <= r;
+const ROCK = [];   // the texture of every cell, fixed so the map doesn't shimmer
+for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
+  let t = y < 2 ? null : y === 2 ? 'grass' : y <= 4 ? 'dirt' : y <= 7 ? 'stone' : 'deep';
+  const h = hash(x, y + 40);
+  const sign = NODES.some(([nx, ny]) => Math.abs(nx - x) <= 1 && y >= ny - 2 && y <= ny);   // keep ore away from signs
+  if (t && y > 2) {
+    if (near(x, y, 5, 2.6)) t = h < .22 && !sign ? 'gem' : 'amethyst';
+    else if (!sign && h < .25) t = near(x, y, 1, 2.6) ? 'coal' : near(x, y, 2, 2.6) ? 'iron' : near(x, y, 3, 2.6) ? 'gold' : t;
+  }
+  ROCK.push(t);
+}
+const mapCanvas = $('#map'), mctx = mapCanvas.getContext('2d');
+let MC = { w: 0, h: 0, S: 0 };
+const M = { walk: null, dig: null, queue: [], goTo: null };   // Pip's walk, the tunnel being dug, and tunnels waiting to be dug
+function fitMap() {
+  const w = mapCanvas.clientWidth; if (!w) return;
+  const S = w / MAP_W, h = Math.round(S * MAP_H), dpr = window.devicePixelRatio || 1;
+  mapCanvas.width = Math.round(w * dpr); mapCanvas.height = Math.round(h * dpr); mapCanvas.style.height = h + 'px';
+  mctx.setTransform(dpr, 0, 0, dpr, 0, 0); mctx.imageSmoothingEnabled = false;
+  MC = { w, h, S };
+}
+const linkTo = j => LINKS.find(l => l.b === j);
+function dugCells() {
+  const dug = new Set(SHAFT.map(([x, y]) => x + ',' + y));
+  dug.add(NODES[0].join(','));
+  for (const l of LINKS) {
+    const n = save.seen[l.b] ? l.cells.length : M.dig && M.dig.link === l ? Math.floor(M.dig.n) + 1 : 0;
+    for (const [x, y] of l.cells.slice(0, n)) dug.add(x + ',' + y);
+  }
+  return dug;
+}
+// Tunnels to newly opened mines: dig them one at a time, then walk Pip to the first new mine.
+function queueDigs() {
+  const fresh = LEVELS.map((_, j) => j).filter(j => isOpen(j) && !save.seen[j] && !M.queue.includes(j) && !(M.dig && M.dig.j === j));
+  if (!fresh.length) return;
+  if (RM) { fresh.forEach(j => { save.seen[j] = 1; }); writeSave(); walkTo(fresh[0]); return; }
+  M.queue.push(...fresh);
+  if (M.goTo === null) M.goTo = fresh[0];
+  if (!M.dig) nextDig();
+}
+function nextDig() {
+  const j = M.queue.shift();
+  if (j === undefined) { const g = M.goTo; M.goTo = null; if (g !== null) walkTo(g); return; }
+  M.dig = { j, link: linkTo(j), n: 0, last: -1 };
+}
+function routeTo(from, to) {
+  // Breadth-first over dug tunnels; returns the cells Pip walks through.
+  const prev = { [from]: null }, todo = [from];
+  while (todo.length) {
+    const u = todo.shift();
+    if (u === to) break;
+    for (const l of LINKS) {
+      if (!save.seen[l.a] || !save.seen[l.b]) continue;
+      const v = l.a === u ? l.b : l.b === u ? l.a : null;
+      if (v !== null && !(v in prev)) { prev[v] = { u, l }; todo.push(v); }
+    }
+  }
+  if (!(to in prev)) return null;
+  const hops = [];
+  for (let v = to; prev[v]; v = prev[v].u) hops.unshift({ u: prev[v].u, l: prev[v].l });
+  const cells = [NODES[from]];
+  for (const { u, l } of hops) cells.push(...(l.a === u ? l.cells : l.cells.slice().reverse()).slice(1));
+  return cells;
+}
+function walkTo(j) {
+  if (!save.seen[j] || M.walk) return;
+  if (M.dig) { M.goTo = j; return; }
+  const cells = routeTo(save.at, j);
+  if (!cells || cells.length < 2 || RM) { save.at = j; writeSave(); renderMapInfo(); return; }
+  M.walk = { cells, p: 0, to: j, last: 0 };
+  renderMapInfo();
+}
+// Arrow keys follow the tunnel that leaves Pip's stop in that direction, or else the stop that lies most that way.
+const ARROWS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+function mapStep(key) {
+  if (M.walk) return;
+  const [dx, dy] = ARROWS[key], here = NODES[save.at];
+  let best = null, score = .3;
+  for (const l of LINKS) {
+    const v = l.a === save.at ? l.b : l.b === save.at ? l.a : null;
+    if (v === null || !save.seen[v] || !save.seen[save.at]) continue;
+    const step = l.a === save.at ? l.cells[1] : l.cells[l.cells.length - 2];
+    const sx = step[0] - here[0], sy = step[1] - here[1];
+    const ox = NODES[v][0] - here[0], oy = NODES[v][1] - here[1];
+    const s = (sx === dx && sy === dy) ? 2 : (ox * dx + oy * dy) / Math.hypot(ox, oy);
+    if (s > score) { score = s; best = v; }
+  }
+  if (best !== null) { audio(); walkTo(best); }
+}
+function digIn() { if (!M.walk && isOpen(save.at)) { audio(); startLevel(save.at); } }
+function stepMap(dt) {
+  if (M.dig) {
+    M.dig.n += dt * 12;
+    const k = Math.floor(M.dig.n);
+    if (k > M.dig.last) { M.dig.last = k; crunch(.06, .07, 900 + Math.random() * 500); }
+    if (M.dig.n >= M.dig.link.cells.length - 1) { save.seen[M.dig.j] = 1; writeSave(); SFX.ore(); M.dig = null; renderMapUi(); nextDig(); }
+  } else if (M.walk) {
+    const w = M.walk;
+    w.p = Math.min(w.p + dt * 7, w.cells.length - 1);
+    if (Math.floor(w.p) > w.last) { w.last = Math.floor(w.p); tone(330 + (w.last % 2) * 60, .04, 'square', .015); }
+    if (w.p >= w.cells.length - 1) { save.at = w.to; writeSave(); M.walk = null; renderMapInfo(); }
+  }
+}
+const STAR = ['..X..', '.XXX.', 'XXXXX', '.XXX.', '.X.X.'];
+function drawStars(c, cx, y, S, n) {
+  const u = S * .06, sw = 5 * u, gap = u * 1.5, w = sw * 3 + gap * 2;
+  c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(cx - w / 2 - u * 2, y - u * 1.5, w + u * 4, sw + u * 3);
+  for (let k = 0; k < 3; k++) {
+    c.fillStyle = k < n ? '#f4b740' : '#5a536b';
+    STAR.forEach((row, j) => { for (let i = 0; i < 5; i++) if (row[i] === 'X') c.fillRect(cx - w / 2 + k * (sw + gap) + i * u, y + j * u, u + .3, u + .3); });
+  }
+}
+function drawMap(dt, time) {
+  if (!MC.w) fitMap();
+  if (!MC.w) return;
+  stepMap(dt);
+  const c = mctx, S = MC.S, dug = dugCells();
+  drawSky(c, MC.w, S * 2);
+  for (let k = 0; k < 2; k++) cloud(c, ((k * MC.w / 2 + time * (5 + k * 3)) % (MC.w + S * 4)) - S * 4, S * (.25 + k * .55), S * .2);
+  // the camp, small, beside the ladder
+  const map = CAMPS[campStage()].map, u = Math.min(S * 2 / map.length, S * .55);
+  map.forEach((row, j) => [...row].forEach((k, i) => {
+    const x = S * 4 + i * u, y = S * 2 - (map.length - j) * u;
+    if (k === 'K') { c.fillStyle = '#2a1f2f'; c.fillRect(x, y, u + 1, u + 1); }
+    else if (k === 'F') { c.fillStyle = '#cf5b4a'; c.fillRect(x + u * .5, y, u * .45, u * .4); }
+    else if (CAMP_TEX[k]) block(c, CAMP_TEX[k], x, y, u);
+  }));
+  for (let y = 2; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) {
+    if (dug.has(x + ',' + y)) {
+      c.fillStyle = '#231d2e'; c.fillRect(x * S, y * S, S + 1, S + 1);
+      c.fillStyle = '#3a3048'; c.fillRect(x * S, y * S + S * .84, S + 1, S * .16 + 1);
+    } else block(c, ROCK[y * MAP_W + x], x * S, y * S, S);
+  }
+  // Gloom Hollow's corner of the hill is darker, and something blinks in there
+  for (let y = 7; y < MAP_H; y++) for (let x = 18; x < MAP_W; x++) if (near(x, y, 6, 2.7)) { c.fillStyle = 'rgba(20,10,35,.5)'; c.fillRect(x * S, y * S, S + 1, S + 1); }
+  if (!save.seen[6] && Math.sin(time * 1.3) > -.85) {
+    c.fillStyle = '#9ff2e6';
+    for (const ex of [22.2, 22.6]) c.fillRect(ex * S, 10.4 * S, S * .14, S * .14);
+  }
+  // ladder
+  for (const [x, y] of SHAFT) {
+    c.fillStyle = '#8a5a2b'; c.fillRect(x * S + S * .2, y * S, S * .1, S); c.fillRect(x * S + S * .7, y * S, S * .1, S);
+    for (let r = 0; r < 3; r++) c.fillRect(x * S + S * .2, y * S + S * (.15 + r * .33), S * .6, S * .08);
+  }
+  // mine signs: the mine's block with its number, stars above, and a lamp glow on Pip's stop
+  const sel = M.walk ? M.walk.to : save.at;
+  NODES.forEach(([x, y], j) => {
+    const parent = linkTo(j);
+    if (!save.seen[j]) {
+      if (isOpen(j) || !parent || !save.seen[parent.a]) return;
+      c.globalAlpha = .55; block(c, 'deep', x * S, (y - 1) * S, S); c.globalAlpha = 1;
+      c.fillStyle = '#c9c2d6'; c.font = `${Math.round(S * .6)}px Silkscreen, monospace`; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText('?', (x + .5) * S, (y - .5) * S);
+      return;
+    }
+    if (j === sel) {
+      const pulse = RM ? .6 : .5 + Math.sin(time * 4) * .2;
+      c.fillStyle = `rgba(244,183,64,${pulse})`; c.fillRect(x * S - S * .2, (y - 1) * S - S * .2, S * 1.4, S * 1.4);
+    }
+    c.fillStyle = '#000'; c.fillRect(x * S - S * .12, (y - 1) * S - S * .12, S * 1.24, S * 1.24);
+    c.fillStyle = '#9c6a34'; c.fillRect(x * S - S * .08, (y - 1) * S - S * .08, S * 1.16, S * 1.16);
+    block(c, LEVELS[j].icon, x * S, (y - 1) * S, S);
+    c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x * S, (y - 1) * S, S, S * .08);
+    c.font = `${Math.round(S * .42)}px Silkscreen, monospace`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillStyle = '#000'; c.fillText(j + 1, (x + .5) * S + S * .05, (y - .5) * S + S * .05);
+    c.fillStyle = '#fff6c2'; c.fillText(j + 1, (x + .5) * S, (y - .5) * S);
+    drawStars(c, (x + .5) * S, (y - 1) * S - S * .42, S, save.stars[j]);
+    // torch beside the entrance
+    c.fillStyle = '#8a5a2b'; c.fillRect(x * S + S * .05, y * S + S * .35, S * .08, S * .3);
+    c.fillStyle = (time * 6 | 0) % 2 ? '#f6d24a' : '#f4b740'; c.fillRect(x * S + S * .03, y * S + S * .24, S * .12, S * .13);
+  });
+  // Pip
+  let px = NODES[save.at][0], py = NODES[save.at][1], bob = RM ? 0 : Math.abs(Math.sin(time * 2)) * .6;
+  if (M.walk) {
+    const w = M.walk, k = Math.floor(w.p), f = w.p - k, a = w.cells[k], b = w.cells[Math.min(k + 1, w.cells.length - 1)];
+    px = a[0] + (b[0] - a[0]) * f; py = a[1] + (b[1] - a[1]) * f; bob = RM ? 0 : Math.abs(Math.sin(w.p * Math.PI)) * 1.5;
+  }
+  drawPip(c, px * S, py * S, S, 0, bob, true);
+}
+function nodeLabel(j) {
+  const L = LEVELS[j];
+  if (!save.seen[j]) return `Mine ${j + 1}, locked`;
+  return `Mine ${j + 1}, ${L.name}. ${save.stars[j]} of 3 stars.` + (save.best[j] ? ` Best ${save.best[j]} words a minute.` : '');
+}
+function renderMapUi() {
+  const box = $('#mapNodes');
+  if (!box.children.length) NODES.forEach(([x, y], j) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'map-node';
+    Object.assign(b.style, { left: (x + .5) / MAP_W * 100 + '%', top: y / MAP_H * 100 + '%', width: 1.6 / MAP_W * 100 + '%', height: 2.4 / MAP_H * 100 + '%' });
+    b.addEventListener('click', () => { audio(); if (j === save.at && !M.walk) digIn(); else walkTo(j); });
+    box.appendChild(b);
+  });
+  [...box.children].forEach((b, j) => { b.hidden = !save.seen[j]; b.setAttribute('aria-label', nodeLabel(j)); });
+  renderMapInfo();
+}
+function scoreList(i, hi) {
+  const list = save.scores[i];
+  if (!list.length) return '<p class="hs-none">No high scores yet. Dig this mine to set one!</p>';
+  return '<ol class="hs">' + list.map((e, k) => `<li${k === hi ? ' class="new"' : ''}><span>${k + 1}</span><b>${e.n}</b>` +
+    `<span class="pts">${e.s.toLocaleString()}</span><span class="sub">${e.w} wpm</span><span class="sub">${e.a}%</span></li>`).join('') + '</ol>';
+}
+function renderMapInfo() {
+  const j = M.walk ? M.walk.to : save.at, L = LEVELS[j], here = !M.walk;
+  $('#mapInfo').innerHTML = `<span class="lv-icon" style="background-image:url(${ICON[L.icon]})"></span>
+    <div class="lv-body"><span class="eyebrow">Mine ${j + 1}</span><span class="lv-name">${L.name}</span>
+      <span class="lv-keys">${L.mode ? L.keys : 'Keys: ' + L.keys}</span>
+      <span class="lv-stars" aria-label="${save.stars[j]} of 3 stars">${starsHtml(save.stars[j])}</span>
+      <span class="mi-best">Best speed: <b>${save.best[j] || '–'}</b> words/min</span></div>
+    <div class="mi-scores"><h3 class="hs-h">High scores</h3>${scoreList(j, -1)}</div>
+    <button class="btn" type="button" id="btnDig"${here ? '' : ' disabled'}>Dig in ▶</button>`;
+  $('#btnDig').addEventListener('click', digIn);
+  [...$('#mapNodes').children].forEach((b, k) => b.setAttribute('aria-current', String(k === save.at)));
+}
+
 /* ---------- screens ---------- */
 function show(name) {
   screen = name;
   $('#screen-title').hidden = name !== 'title';
   $('#screen-play').hidden = name !== 'play';
   $('#screen-results').hidden = name !== 'results';
-  if (name === 'title') { renderTitle(); setMusicTheme('title'); requestAnimationFrame(fitCamp); }
+  if (name === 'title') { renderTitle(); setMusicTheme('title'); requestAnimationFrame(() => { fitCamp(); fitMap(); }); }
   window.scrollTo(0, 0);
 }
 const opensAt = j => LEVELS[j].open ?? j + 1;           // value of save.unlocked that opens mine j
 const isOpen = j => save.unlocked >= opensAt(j);
 function starsHtml(n) { return '<b>' + '★'.repeat(n) + '</b>' + '★'.repeat(3 - n); }
 function renderTitle() {
-  const box = $('#levels'); box.textContent = '';
-  LEVELS.forEach((L, i) => {
-    const locked = !isOpen(i);
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'level'; b.disabled = locked;
-    b.innerHTML = `<span class="lv-icon" style="background-image:url(${ICON[L.icon]})"></span>
-      <span class="lv-body"><span class="eyebrow">Mine ${i + 1}</span><span class="lv-name">${L.name}</span>
-      <span class="lv-keys">${locked ? 'Locked: score 85% in Mine ' + (opensAt(i) - 1) + ' to open' : (L.mode ? L.keys : 'Keys: ' + L.keys)}</span></span>
-      <span class="lv-stars" aria-label="${save.stars[i]} of 3 stars">${starsHtml(save.stars[i])}</span>`;
-    b.addEventListener('click', () => { audio(); startLevel(i); });
-    box.appendChild(b);
-  });
+  queueDigs();
+  renderMapUi();
   const si = campStage(), st = CAMPS[si], nx = CAMPS[si + 1], tot = save.totals.blocks;
   $('#campName').textContent = 'Your camp: ' + st.name;
   $('#campLine').textContent = nx ? `${tot} blocks mined. Mine ${nx.need - tot} more to build a ${nx.name}.` : `${tot} blocks mined. Your castle is complete!`;
@@ -1206,8 +1469,15 @@ function showResults() {
   save.stars[i] = Math.max(save.stars[i], stars);
   save.totals.blocks += G.blocks;
   for (const k of Object.keys(G.ores)) save.totals[k] += G.ores[k];
-  const speed = wpm();
-  if (L.wpm) save.best[i] = Math.max(save.best[i], speed);
+  const speed = wpm(), prevBest = save.best[i];
+  save.best[i] = Math.max(prevBest, speed);
+  const score = scoreOf(acc, speed);
+  const list = save.scores[i];
+  let rank = list.findIndex(e => score > e.s);
+  if (rank < 0) rank = list.length;
+  if (score > 0 && rank < 5) { list.splice(rank, 0, { s: score, w: speed, a: Math.round(acc * 100), n: save.name || 'YOU' }); list.length = Math.min(list.length, 5); }
+  else rank = -1;
+  lastRun = { i, rank };
   let unlocked = false;
   if (!failed && acc >= PASS && i + 1 < LEVELS.length && save.unlocked < i + 2) { save.unlocked = i + 2; unlocked = true; }
   writeSave();
@@ -1218,8 +1488,7 @@ function showResults() {
   $('#resStars').innerHTML = starsHtml(stars);
   $('#resStars').setAttribute('aria-label', stars + ' of 3 stars');
   const oreLine = Object.entries(G.ores).filter(([, n]) => n).map(([k, n]) => n + ' ' + ORE_NAME[k]).join(', ') || 'none this time';
-  const cells = [['Correct', Math.round(acc * 100) + '%'], L.mode ? ['Sent home', G.sent] : ['Blocks', G.blocks], ['Treasure', oreLine]];
-  if (L.wpm) cells.splice(1, 0, ['Words/min', speed]);
+  const cells = [['Score', score.toLocaleString()], ['Words/min', speed], ['Correct', Math.round(acc * 100) + '%'], L.mode ? ['Sent home', G.sent] : ['Blocks', G.blocks], ['Treasure', oreLine]];
   $('#resGrid').innerHTML = cells.map(([a, b]) => `<div><span>${a}</span><span${a === 'Treasure' ? ' style="font-size:18px"' : ''}>${b}</span></div>`).join('');
   const msg = $('#resMsg');
   const parts = [];
@@ -1232,19 +1501,52 @@ function showResults() {
   if (after > before) parts.push(`Your camp grew into a ${CAMPS[after].name}.`);
   msg.textContent = parts.join(' ');
   msg.className = 'res-msg' + (newlyOpen.length || after > before ? ' unlock' : '');
+  const badges = [];
+  if (rank === 0) badges.push('New high score!');
+  else if (rank >= 0) badges.push(`Number ${rank + 1} on the high score list!`);
+  if (prevBest && speed > prevBest) badges.push(`New best speed: ${speed} words/min!`);
+  $('#resBadges').innerHTML = badges.map(b => `<span class="badge">${b}</span>`).join('');
+  $('#initialsRow').hidden = rank < 0;
+  $('#resName').value = save.name;
+  renderResultScores();
   const nextOk = i + 1 < LEVELS.length && isOpen(i + 1);
   const nb = $('#btnNext');
   nb.hidden = !nextOk;
   show('results');
-  (nextOk ? nb : $('#btnAgain')).focus();
+  if (rank >= 0) { $('#resName').focus(); $('#resName').select(); }
+  else (nextOk ? nb : $('#btnAgain')).focus();
 }
+
+// Score: every right key is 10 points and treasure is 25, then accuracy and speed multiply it. Accuracy counts twice,
+// so careful typing always beats fast, sloppy typing. Speed past 60 words/min adds nothing more.
+function scoreOf(acc, speed) {
+  const ores = Object.values(G.ores).reduce((a, b) => a + b, 0);
+  const base = G.correct * 10 + ores * 25 + (G.mobs && !G.failed ? G.hearts * 100 : 0);
+  return Math.round(base * acc * acc * (1 + Math.min(speed, 60) / 30));
+}
+let lastRun = null;
+function renderResultScores() {
+  $('#resTable').innerHTML = `<h3 class="hs-h">High scores: ${LEVELS[lastRun.i].name}</h3>` + scoreList(lastRun.i, lastRun.rank);
+}
+$('#resName').addEventListener('input', () => {
+  const el = $('#resName'), n = cleanName(el.value);
+  if (el.value !== n) el.value = n;
+  save.name = n;
+  if (lastRun && lastRun.rank >= 0) save.scores[lastRun.i][lastRun.rank].n = n || 'YOU';
+  writeSave(); renderResultScores();
+});
 
 /* ---------- input ---------- */
 const ghost = $('#ghost');
 function focusGhost() { try { ghost.focus({ preventScroll: true }); } catch (e) {} }
 window.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (screen === 'title' && e.key.length === 1) { cheatKey(e.key.toLowerCase()); return; }
+  if (screen === 'title') {
+    if (ARROWS[e.key]) { e.preventDefault(); mapStep(e.key); return; }
+    if (e.key === 'Enter' && !(document.activeElement && document.activeElement.tagName === 'BUTTON')) { e.preventDefault(); digIn(); return; }
+    if (e.key.length === 1) cheatKey(e.key.toLowerCase());
+    return;
+  }
   if (screen === 'results' && e.key === 'Enter') { e.preventDefault(); const nb = $('#btnNext'); (nb.hidden ? $('#btnAgain') : nb).click(); return; }
   if (screen !== 'play') return;
   if (e.key === 'Escape') { leavePlay(); return; }
@@ -1288,14 +1590,14 @@ for (const ev of ['pointerdown', 'keydown']) window.addEventListener(ev, () => s
 function syncHands() { const b = $('#btnHands'); b.textContent = save.hands ? 'Hands: on' : 'Hands: off'; b.setAttribute('aria-pressed', String(save.hands)); }
 $('#btnHands').addEventListener('click', () => { save.hands = !save.hands; writeSave(); syncHands(); focusGhost(); });
 
-new ResizeObserver(() => { fitWorld(); fitCamp(); measureHands(); }).observe(document.body);
+new ResizeObserver(() => { fitWorld(); fitCamp(); fitMap(); measureHands(); }).observe(document.body);
 
 /* ---------- loop + boot ---------- */
 let lastT = performance.now();
 function frame(t) {
   const dt = Math.min(.05, (t - lastT) / 1000); lastT = t;
   if (screen === 'play' && G) { if (G.mobs) drawMobs(dt); else drawPlay(dt); drawHands(dt); }
-  else if (screen === 'title') drawCamp(t / 1000);
+  else if (screen === 'title') { drawCamp(t / 1000); drawMap(dt, t / 1000); }
   requestAnimationFrame(frame);
 }
 function boot(data) {

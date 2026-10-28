@@ -15,7 +15,7 @@ An original typing game for kids, set in a blocky mining world. Pip the miner di
 | 2 | Coal Seam | g h e i r u, then short words |
 | 3 | Iron Ridge | t y w o q p, then words |
 | 4 | Gold Depths | z x c v b n m , . then words |
-| 5 | Word Mine | real words using every letter; shows words per minute |
+| 5 | Word Mine | real words using every letter |
 | 6 | Crystal Caves | Shift, capitals and periods in short sentences |
 | 7 | Gloom Hollow (boss mine) | every letter, under gentle time pressure: type the word on each Gloomling to send it home, then beat the Rumble Golem one word at a time |
 
@@ -23,7 +23,19 @@ A mine opens once the child scores **85% correct** on the one before it. Gloom H
 
 **Grown-up cheat:** type `idkfa` on the title screen (the mine map) to open every mine. Stars and camp progress stay as they are.
 
-Stars: 3 for ≥97%, 2 for ≥90%, otherwise 1. Speed is shown only from Mine 5 on, because accuracy comes first.
+Stars: 3 for ≥97%, 2 for ≥90%, otherwise 1.
+
+## The quarry map
+The title screen's mine picker is a map: a slice of the hill under the camp, with a ladder down from the camp and a tunnel joining each mine's stop, one after another. Gloom Hollow is a side tunnel off Gold Depths, because it opens at the same time as Word Mine.
+- When a mine opens, the tunnel to it is dug out once while you watch, and Pip then walks to the new mine. A locked mine next to an open one shows as a "?" sign.
+- Click or tap a mine (or use the arrow keys) to walk Pip there along the tunnels. Click it again, press Enter, or press **Dig in** to play.
+- The panel under the map shows the mine Pip is at: its keys, stars, best speed and top 5 high scores.
+- Saves from before 1.3 dig every tunnel they had already opened the first time the map shows.
+
+## Speed and high scores
+- **Words per minute** shows on every mine, during play and on the results screen (correct keys ÷ 5 per minute, from the first key). Each mine remembers its best speed.
+- **Score** = 10 points per correct key + 25 per treasure (+ 100 per heart left after beating the boss), multiplied by accuracy² and by a speed bonus of 1 + words per minute ÷ 30 (counted up to 60 wpm). Accuracy is squared, so careful typing beats fast, sloppy typing.
+- Each mine keeps a **top 5**. A run that makes the list asks for initials (3 letters, remembered for next time) and highlights its row.
 
 ## Teaching aids
 - An on-screen keyboard colour-coded by finger, with the next key bouncing. For a capital it also lights up the Shift key on the other hand.
@@ -74,7 +86,7 @@ How it fits together:
 - The Windows build is built on a Mac and has not yet been run on a Windows PC.
 
 ## Notes
-- Progress (unlocked mines, stars, camp size) is kept in the browser's `localStorage`, so it stays on that device and browser only.
+- Progress (unlocked mines, stars, camp size, best speeds, high scores and Pip's spot on the map) is kept in the browser's `localStorage`, so it stays on that device and browser only.
 - The file has no `<!doctype>`/`<html>`/`<body>`, because the artifact host adds those when it publishes. To play it locally, wrap it in a minimal HTML page or serve it. Opening it directly also works, but in quirks mode.
 - To republish after editing, ask Claude to publish `keystone-quarry/index.html` to the artifact URL above.
 - Original game: no assets, names or characters are taken from any existing game.
