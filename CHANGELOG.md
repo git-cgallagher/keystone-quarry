@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 — 2026-10-28
+- Quarry map: the mine list on the title screen is now a map of tunnels under the camp. Opening a mine digs the tunnel to it, and Pip walks there. Click a mine or use the arrow keys to move Pip, then click again or press Enter to play. Gloom Hollow is a side tunnel off Gold Depths.
+- Words per minute: shown on every mine now (it was Mines 5–7 only), with a best speed per mine.
+- High scores: each run earns a score from correct keys, treasure, accuracy and speed. Each mine keeps a top 5 with the player's initials.
+- Saves from 1.2 carry over: their open tunnels are dug the first time the map shows.
+
 ## 1.2.1 — 2026-10-28
 - Security: Electron 44.7.1 → 44.9.3, which distrusts the compromised eMudhra intermediate certificates (Dependabot alert 1, high). The game makes no network requests, so the practical risk was low, but the apps no longer ship the affected runtime.
 - Repository: published at github.com/git-cgallagher/keystone-quarry (public, MIT) with CI (`npm run check`, Windows and macOS packaging), Dependabot for GitHub Actions, and a security policy.
