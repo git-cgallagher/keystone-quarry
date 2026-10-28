@@ -5,13 +5,14 @@
   "description": "A blocky mining game that teaches kids touch typing.",
   "main": "main.js",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
+    "check": "node scripts/check.js",
     "build:app": "node scripts/build-app.js",
     "build:icon": "electron scripts/make-icon.js && iconutil -c icns build/icon.iconset -o build/icon.icns",
     "start": "npm run build:app && electron .",
-    "pack:mac": "npm run build:app && electron-packager . \"Keystone Quarry\" --platform=darwin --arch=universal --icon=build/icon --app-bundle-id=net.cgallagher.keystonequarry --asar --overwrite --out=dist --ignore=\"^/(index\\.html|README\\.md|CHANGELOG\\.md|\\.gitignore|dist-build\\.log|scripts|build|dist)$\" && codesign --force --deep --sign - \"dist/Keystone Quarry-darwin-universal/Keystone Quarry.app\" && hdiutil create -volname \"Keystone Quarry\" -srcfolder \"dist/Keystone Quarry-darwin-universal/Keystone Quarry.app\" -ov -format UDZO dist/Keystone-Quarry-mac.dmg",
-    "pack:win": "npm run build:app && electron-packager . \"Keystone Quarry\" --platform=win32 --arch=x64 --icon=build/icon --asar --overwrite --out=dist --ignore=\"^/(index\\.html|README\\.md|CHANGELOG\\.md|\\.gitignore|dist-build\\.log|scripts|build|dist)$\" && cd dist && rm -f Keystone-Quarry-windows-x64.zip && zip -qry Keystone-Quarry-windows-x64.zip \"Keystone Quarry-win32-x64\"",
+    "pack:mac": "npm run build:app && electron-packager . \"Keystone Quarry\" --platform=darwin --arch=universal --icon=build/icon --app-bundle-id=net.cgallagher.keystonequarry --asar --overwrite --out=dist --ignore=\"^/(index\\.html|README\\.md|CHANGELOG\\.md|LICENSE|SECURITY\\.md|\\.github|\\.gitignore|dist-build\\.log|scripts|build|dist)$\" && codesign --force --deep --sign - \"dist/Keystone Quarry-darwin-universal/Keystone Quarry.app\" && hdiutil create -volname \"Keystone Quarry\" -srcfolder \"dist/Keystone Quarry-darwin-universal/Keystone Quarry.app\" -ov -format UDZO dist/Keystone-Quarry-mac.dmg",
+    "pack:win": "npm run build:app && electron-packager . \"Keystone Quarry\" --platform=win32 --arch=x64 --icon=build/icon --asar --overwrite --out=dist --ignore=\"^/(index\\.html|README\\.md|CHANGELOG\\.md|LICENSE|SECURITY\\.md|\\.github|\\.gitignore|dist-build\\.log|scripts|build|dist)$\" && cd dist && rm -f Keystone-Quarry-windows-x64.zip && zip -qry Keystone-Quarry-windows-x64.zip \"Keystone Quarry-win32-x64\"",
     "pack": "npm run pack:mac && npm run pack:win"
   },
   "devDependencies": {
@@ -19,5 +20,9 @@
     "@fontsource/atkinson-hyperlegible": "5.3.0",
     "@fontsource/silkscreen": "5.3.0",
     "electron": "44.7.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/git-cgallagher/keystone-quarry.git"
   }
 }

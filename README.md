@@ -3,6 +3,7 @@
 An original typing game for kids, set in a blocky mining world. Pip the miner digs a tunnel. Each block shows a key, and pressing that key breaks the block. Blocks you mine build up your camp, which grows from a tent to a log hut, a cottage, a stone tower and finally a castle.
 
 - **Play:** https://claude.ai/artifact/WikF7R3gb3pZJy5yCZwEfW (private Claude artifact; share it from the page's Share menu)
+- **Repository:** https://github.com/git-cgallagher/keystone-quarry (public, MIT licensed). CI checks every pull request: the game script parses, the desktop page builds offline, and both desktop apps package. Each run keeps the `.dmg` and `.zip` as downloadable workflow artifacts for 7 days. Branch `main` is protected, so changes go through pull requests.
 - **Source:** `index.html`. This is a single file with no build step and no dependencies apart from two Google Fonts. It is the only copy of the game: the desktop apps are built from it.
 - **Desktop apps:** macOS (`dist/Keystone-Quarry-mac.dmg`) and Windows (`dist/Keystone-Quarry-windows-x64.zip`). See [Desktop builds](#desktop-builds).
 
